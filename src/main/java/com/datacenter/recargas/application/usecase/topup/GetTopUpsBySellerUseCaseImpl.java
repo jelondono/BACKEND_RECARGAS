@@ -2,29 +2,22 @@ package com.datacenter.recargas.application.usecase.topup;
 
 import com.datacenter.recargas.application.port.in.topup.GetTopUpsBySellerUseCase;
 import com.datacenter.recargas.application.port.out.TopUpPort;
-import com.datacenter.recargas.infrastructure.adapter.web.dto.topup.TopUpResponseDTO;
-import com.datacenter.recargas.infrastructure.adapter.web.mapper.TopUpMapper;
+import com.datacenter.recargas.domain.model.TopUpDomain;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class GetTopUpsBySellerUseCaseImpl implements GetTopUpsBySellerUseCase {
 
-    private final TopUpPort topUpRepository;
-    private final TopUpMapper topUpMapper;
+    private final TopUpPort topUpPort;
 
-    public GetTopUpsBySellerUseCaseImpl(TopUpPort topUpRepository, TopUpMapper topUpMapper) {
-        this.topUpRepository = topUpRepository;
-        this.topUpMapper = topUpMapper;
+    public GetTopUpsBySellerUseCaseImpl(TopUpPort topUpPort) {
+        this.topUpPort = topUpPort;
     }
 
     @Override
-    public List<TopUpResponseDTO> execute(Long sellerId) {
-        return topUpRepository.findBySellerId(sellerId)
-                .stream()
-                .map(topUpMapper::toResponseDTO)
-                .collect(Collectors.toList());
+    public List<TopUpDomain> execute(Long sellerId) {
+        return topUpPort.findBySellerId(sellerId);
     }
 }

@@ -2,6 +2,8 @@ package com.datacenter.recargas.application.usecase.topup;
 
 import com.datacenter.recargas.application.port.in.topup.CreateTopUpUseCase;
 import com.datacenter.recargas.application.port.in.operators.GetOperatorByIdUseCase;
+import com.datacenter.recargas.application.port.out.OperatorPort;
+import com.datacenter.recargas.application.port.out.SellerPort;
 import com.datacenter.recargas.application.port.out.TopUpPort;
 import com.datacenter.recargas.application.port.in.sellers.GetSellerByIdUseCase;
 import com.datacenter.recargas.domain.model.OperatorDomain;
@@ -14,29 +16,29 @@ import java.time.LocalDateTime;
 @Service
 public class CreateTopUpUseCaseImpl implements CreateTopUpUseCase {
 
-    private final GetSellerByIdUseCase getSellerByIdUseCase;
-    private final GetOperatorByIdUseCase getOperatorByIdUseCase;
-    private final TopUpPort topUpRepository;
+    private final TopUpPort topUpPort;
+    private final OperatorPort operatorPort;
+    private final SellerPort sellerPort;
 
-    public CreateTopUpUseCaseImpl(GetOperatorByIdUseCase getOperatorByIdUseCase, GetSellerByIdUseCase getSellerByIdUseCase, TopUpPort topUpRepository) {
-        this.getOperatorByIdUseCase = getOperatorByIdUseCase;
-        this.getSellerByIdUseCase = getSellerByIdUseCase;
-        this.topUpRepository = topUpRepository;
+    public CreateTopUpUseCaseImpl(TopUpPort topUpPort, OperatorPort operatorPort, SellerPort sellerPort) {
+        this.topUpPort = topUpPort;
+        this.operatorPort = operatorPort;
+        this.sellerPort = sellerPort;
     }
 
     @Override
     public TopUpDomain execute(TopUpDomain topUp) {
-        OperatorDomain operator = getOperatorByIdUseCase.execute(topUp.getOperator().getId())
+        OperatorDomain operator = operatorPort.findById(topUp.getOperator().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Operador no encontrado con ID: " + topUp.getOperator().getId()));
         topUp.setOperator(operator);
 
-        SellerDomain seller = getSellerByIdUseCase.execute(topUp.getSeller().getId())
+        SellerDomain seller = sellerPort.findSellerById(topUp.getSeller().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Vendedor no encontrado con ID: " + topUp.getSeller().getId()));
         topUp.setSeller(seller);
 
         topUp.setDate(LocalDateTime.now());
-
-        return topUpRepository.saveTopUp(topUp);
+        return topUpPort.saveTopUp(topUp);
     }
-
 }
+
+
