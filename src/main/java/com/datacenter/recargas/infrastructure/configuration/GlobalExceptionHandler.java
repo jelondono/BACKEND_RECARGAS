@@ -1,3 +1,5 @@
+package com.datacenter.recargas.infrastructure.configuration;
+
 import com.datacenter.recargas.infrastructure.adapter.web.dto.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
