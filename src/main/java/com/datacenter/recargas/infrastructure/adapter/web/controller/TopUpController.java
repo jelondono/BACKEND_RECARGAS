@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/topups")
 public class TopUpController {
@@ -58,7 +57,10 @@ public class TopUpController {
     })
     @GetMapping("/by-seller/{sellerId}")
     public ResponseEntity<List<TopUpResponseDTO>> getTopUpsBySeller(@PathVariable Long sellerId) {
-        return ResponseEntity.ok(getTopUpsBySellerUseCase.execute(sellerId));
+        List<TopUpResponseDTO> response = getTopUpsBySellerUseCase.execute(sellerId).stream()
+                .map(topUpMapper::toResponseDTO)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Obtener recargas por operador", description = "Devuelve una lista de recargas realizadas por un operador específico.")
@@ -69,7 +71,10 @@ public class TopUpController {
     })
     @GetMapping("/by-operator/{operatorId}")
     public ResponseEntity<List<TopUpResponseDTO>> getTopUpsByOperator(@PathVariable Long operatorId) {
-        return ResponseEntity.ok(getTopUpsByOperatorUseCase.execute(operatorId));
+        List<TopUpResponseDTO> response = getTopUpsByOperatorUseCase.execute(operatorId).stream()
+                .map(topUpMapper::toResponseDTO)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Obtener recargas según tipo", description = "Devuelve una lista de recargas según el tipo (vendedor u operador).")
@@ -84,9 +89,15 @@ public class TopUpController {
             @RequestParam(required = false) Long operatorId) {
 
         if (sellerId != null) {
-            return ResponseEntity.ok(getTopUpsBySellerUseCase.execute(sellerId));
+            List<TopUpResponseDTO> response = getTopUpsBySellerUseCase.execute(sellerId).stream()
+                    .map(topUpMapper::toResponseDTO)
+                    .toList();
+            return ResponseEntity.ok(response);
         } else if (operatorId != null) {
-            return ResponseEntity.ok(getTopUpsByOperatorUseCase.execute(operatorId));
+            List<TopUpResponseDTO> response = getTopUpsByOperatorUseCase.execute(operatorId).stream()
+                    .map(topUpMapper::toResponseDTO)
+                    .toList();
+            return ResponseEntity.ok(response);
         } else {
             throw new IllegalArgumentException("Debe especificar un sellerId o un operatorId.");
         }
