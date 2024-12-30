@@ -60,7 +60,7 @@ src/
 
 1. Cambiar las credenciales de la base de datos en el archivo `application.properties`:
    ```properties
-spring.datasource.url=jdbc:mysql://localhost:3307/recargasdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    spring.datasource.url=jdbc:mysql://localhost:3307/recargasdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
    spring.datasource.username=sa
    spring.datasource.password=
    spring.jpa.hibernate.ddl-auto=update
